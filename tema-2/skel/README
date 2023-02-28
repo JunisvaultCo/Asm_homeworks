@@ -1,0 +1,48 @@
+
+This homework was done as part of the IOCLA course by me (Plăiașu Iulia-Silvia)
+in X86 assembly.
+
+Exercise 1: Rotp
+Using 2 pointers, one in ecx (the current place in key) and one in eax (current
+place in the other two), at each iteration I increment eax and (the loop mnemonic)
+decreases ecx.
+I decided to use the loop mnemonic. Therefore I initialise ecx as the number of steps
+(the length of the word). We have to be careful since then ecx will be numbers from
+1 to len, instead of 0 to len - 1 as it should be. Therefore when I want to get the
+value I get it from plaintext + ecx - 1. Therefore I am careful when working with chars
+(8 bits) and use the 8 bit register bl when I modify.
+
+Exercise 2: Ages
+The idea is that I don't want to transform the date in days, to subtract and then
+transform it back into years (it can overflow). Therefore the year difference
+(from my_date.year) is nearly the age difference that I want to calculate. If it's
+after the birthday then the last year was also added and I don't subtract anything.
+Otherwise I subtract one.
+
+Exercise 3: Columnar
+I observed that len_cheie and len_haystack are given as pointers and am careful to
+use [len_cheie] and [len_haystack] when I desire to know the length.
+I decided not to use an extra matrix. Therefore I generate ciphertext in order
+(first position 0, then position 1... etc). I couldn't have done otherwise
+because I don't know how many elements are actually in the collumn (if len_haystack
+isn't divisible by len_cheie then what will be the left will be the squares in the
+columns which we are not interested in). On a column i (where i is between 0 and
+len_cheie - 1) there will be all the letters in the haystack for which pos %
+len_cheie == i (pos is their position in the haystack from 0 to len_haystack - 1),
+in increasing order of position. Therefore, in order to read a certain column i,
+I start from i and add len_cheie every time until I reach a position which doesn't
+exist (if len_haystack is smaller than len_cheie).
+
+Exercise 4: Cache
+Unfortunately there are too many registers already used and I decided to put the
+data on stack when I need them in order to be able to use registers.
+In order to get the last 3 bits I used shr, which moves all the bits to the right
+with a number given as parameter (in this case 3) and in the empty spaces in the
+left puts 0. In order to save the last 3 bits I used "and" with the mask 7
+(0000 0111 in binary).
+Besides that, the solution has three large parts: searching the tag,
+saving in cache and tags (if it's the case), updating the output "register".
+First it searches the tag. If it find it, it goes immediately to updating the
+output register, otherwise it saves in the cache and then updates the output
+register. When updating the output "register" it is desired that the line gets
+saved in ecx.
